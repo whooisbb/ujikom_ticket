@@ -4,8 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class SuperAdminMiddleware
 {
@@ -16,11 +16,11 @@ class SuperAdminMiddleware
                 return $next($request);
             } else {
                 Auth::logout();
-                return redirect('/login');
+                return redirect('/login')->with('error', 'You do not have super admin access.');
             }
         } else {
             Auth::logout();
-            return redirect('/login');
+            return redirect('/login')->with('error', 'Please login first.');
         }
     }
 }

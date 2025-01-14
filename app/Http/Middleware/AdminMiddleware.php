@@ -11,11 +11,16 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->is_role == 1) {
-            return $next($request);
+        if (Auth::check()) {
+            if (Auth::user()->is_role == 1) {
+                return $next($request);
+            } else {
+                Auth::logout();
+                return redirect('/login')->with('error', 'You do not have admin access.');
+            }
+        } else {
+            Auth::logout();
+            return redirect('/login')->with('error', 'Please login first.');
         }
-
-        Auth::logout();
-        return redirect('/login')->with('error', 'You do not have admin access.');
     }
 }
