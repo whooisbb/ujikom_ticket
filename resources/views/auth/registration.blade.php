@@ -19,48 +19,78 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #f0f2f5;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .background-decor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .background-decor::before, .background-decor::after {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 20%, transparent 20%);
+            background-size: 50px 50px;
+            animation: moveBackground 10s linear infinite;
+        }
+
+        .background-decor::before {
+            top: -50%;
+            left: -50%;
+        }
+
+        .background-decor::after {
+            bottom: -50%;
+            right: -50%;
+            animation-direction: reverse;
+        }
+
+        @keyframes moveBackground {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(50px, 50px);
+            }
         }
 
         .container {
             display: flex;
             justify-content: center;
+            align-items: center;
             width: 100%;
-            max-width: 800px;
+            max-width: 1200px;
+            padding: 20px;
         }
 
         .wrapper {
-            background: white;
+            background: rgba(255, 255, 255, 0.8);
             border-radius: 20px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 800px;
-            display: flex;
-            overflow: hidden;
-        }
-
-        .registration-side {
-            flex: 3;
-            padding: 35px;
-        }
-
-        .welcome-side {
-            flex: 1;
-            background: #4e6bff;
+            max-width: 400px;
             padding: 40px;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             text-align: center;
+            animation: fadeIn 1s ease-in-out;
+            backdrop-filter: blur(10px);
         }
 
         .title {
-            font-size: 24px;
+            font-size: 36px;
             font-weight: bold;
-            margin-bottom: 30px;
+            margin-bottom: px;
             color: #333;
+            animation: slideInDown 1s ease-in-out;
         }
 
         .row {
@@ -87,30 +117,25 @@
         }
 
         .row input:focus, .row select:focus {
-            border-color: #4e6bff;
-            background: #e0e7ff;
-        }
-
-        .pass {
-            margin-bottom: 20px;
-            text-align: right;
-        }
-
-        .pass a {
-            color: #4e6bff;
-            text-decoration: none;
+            border-color: #ff6f61;
+            background: #ffe6e6;
         }
 
         .regisbtn input[type="submit"] {
             width: 100%;
             padding: 12px;
-            background: #4e6bff;
+            background: #ff6f61;
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
             margin-bottom: 20px;
+            transition: background 0.3s ease;
+        }
+
+        .regisbtn input[type="submit"]:hover {
+            background: #ff4b3e;
         }
 
         .signup-link {
@@ -120,86 +145,92 @@
         }
 
         .signup-link a {
-            color: #4e6bff;
+            color: #ff6f61;
             text-decoration: none;
             font-weight: 500;
+            transition: color 0.3s ease;
         }
 
-        .welcome-side h1 {
-            font-size: 32px;
-            margin-bottom: 20px;
+        .signup-link a:hover {
+            color: #ff4b3e;
         }
 
-        .welcome-side p {
-            margin-bottom: 20px;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
-        .welcome-side a {
-            padding: 12px 40px;
-            border: 2px solid white;
-            border-radius: 8px;
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         @media (max-width: 768px) {
             .wrapper {
-                flex-direction: column;
-                margin: 20px;
+                padding: 20px;
             }
-            
-            .welcome-side {
-                padding: 30px;
+
+            .title {
+                font-size: 28px;
+            }
+
+            .row input, .row select {
+                padding: 10px 10px 10px 40px;
+            }
+
+            .regisbtn input[type="submit"] {
+                padding: 10px;
             }
         }
     </style>
 </head>
-<body>  
-    <div class="container">
+<body>
+    <div class="background-decor"></div>
+<div class="container">
+        <span style="color: yellow;">{{ $errors->first('email')}}<br></span>
+        <span style="color: red;">{{ $errors->first('password')}}<br></span>
+        <span style="color: red    ;">{{ $errors->first('confirm_password')}}<br></span>
         @include('_message')
         <div class="wrapper">
-            <div class="registration-side">
-                <div class="title"><span>Create Account</span></div>
-                <form action="{{ url('registration_post') }}" method="post">
-                    {{ csrf_field() }}
-                    <div class="row">
-                        <i class="fas fa-user"></i>
-                        <input type="text" value="{{ old('name') }}" placeholder="Username" required name="name">
-                    </div>
-                    <div class="row">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" value="{{ old('email') }}" placeholder="Email" required name="email">
-                    </div>
-                    <div class="row">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" value="" placeholder="Password" required name="password">
-                    </div>
-                    <div class="row">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" value="" placeholder="Confirm Password" required name="confirm_password">
-                    </div>
-                    <div class="row">
-                        <select class="selectbox" name="is_role" required> 
-                            <option value="">Select Role</option> 
-                            <option {{ old('is_role') == '2' ? 'selected' :''}} value="2">Super Admin</option>
-                            <option {{ old('is_role') == '1' ? 'selected' :''}} value="1">Admin</option>
-                            <option {{ old('is_role') == '0' ? 'selected' :''}} value="0">User</option>
-                        </select>
-                    </div>
-                    <div class="pass"><a href="{{url('forgot')}}">Forgot Password</a></div>
-                    <div class="regisbtn">
-                        <input type="submit" value="Registration">
-                    </div>
-                    <div class="signup-link">Already have an account? <a href="{{url('login')}}"> Login </a></div>
-                    <div class="signup-link">Main Menu <a href="{{url('/')}}"> Home </a></div>
-                </form>
-            </div>
-            <div class="welcome-side">
-                <h1>Welcome!</h1>
-                <p>Enter your personal details to create an account</p>
-                <a href="{{url('login')}}">Login</a>
-            </div>
+            <div class="title"><span>Create Account</span></div>
+            <form action="{{ url('registration_post') }}" method="post">
+                {{ csrf_field() }}
+                <div class="row">
+                    <input type="text" value="{{ old('name') }}" placeholder="Username" required name="name">
+                </div>
+                <div class="row">
+                    <input type="email" value="{{ old('email') }}" placeholder="Email" required name="email">
+                </div>
+                <div class="row">
+                    <input type="password" value="" placeholder="Password" required name="password">
+                </div>
+                <div class="row">
+                    <input type="password" value="" placeholder="Confirm Password" required name="confirm_password">
+                </div>
+                <div class="row">
+                    <select name="is_role" required>
+                        <option value="">Select Role</option>
+                        <option {{ old('is_role') == '2' ? 'selected' :''}} value="2">Super Admin</option>
+                        <option {{ old('is_role') == '1' ? 'selected' :''}} value="1">Admin</option>
+                        <option value="0">User</option>
+                    </select>
+                </div>
+                <div class="regisbtn">
+                    <input type="submit" value="Register">
+                </div>
+                <div class="signup-link">Already have an account? <a href="{{url('login')}}">Login</a></div>
+                <div class="signup-link">Main Menu <a href="{{url('/')}}">Home</a></div>
+            </form>
         </div>
     </div>
 </body>
